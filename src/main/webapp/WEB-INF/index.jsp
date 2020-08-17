@@ -43,6 +43,9 @@
 	       </div>
 	       <div class="col">
 	           <form action="/login" method="post">
+	               <c:if test="${loginError != null}">
+	                   <p class="text-danger">${loginError}</p>
+	               </c:if>
 	               <div class="form-group">
                        <label>Email:</label>
                        <input type="text" name="email" class="form-control" />

@@ -1,7 +1,10 @@
 package com.hygogg.cookbook.controllers;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,13 +27,14 @@ public class UserController {
 	}
 	
 	@GetMapping("/")
-	public String index(Model model) {
+	public String index(Model model, HttpServletRequest request) {
 		model.addAttribute("user", new User());
+		model.addAttribute("loginError", request.getParameter("loginError"));
 		return "index.jsp";
 	}
 	
 	@PostMapping("/register")
-	public String register(@Valid @ModelAttribute("user") User u, BindingResult result) {
+	public String register(@Valid @ModelAttribute("user") User u, BindingResult result, HttpSession session) {
 		if( userServ.getOne(u.getEmail()) != null) {
 			result.rejectValue("email", "Unique", "Email already in use! Try logging in?");
 		}
@@ -40,14 +44,38 @@ public class UserController {
 		if(result.hasErrors()) {
 			return "index.jsp";
 		} else {
-			userServ.create(u);
-			return "redirect:/";
+			User userFromDb = userServ.create(u);
+			session.setAttribute("user", userFromDb);
+			return "redirect:/success";
 		}		
 	}
 	
 	@PostMapping("/login")
-	public String login(@RequestParam(value="email") String email, @RequestParam(value="password") String password) {
-		return "redirect:/";
+	public String login(@RequestParam(value="email") String email, @RequestParam(value="password") String password, HttpSession session) {
+		User userInDb = userServ.getOne(email);
+		if(userInDb != null) {
+			if(BCrypt.checkpw(password, userInDb.getPassword())) {
+				session.setAttribute("user", userInDb);
+				return "redirect:/success";
+			}
+		}
+		return "redirect:/?loginError=Invalid login attempt";
 	}	
+	
+	@GetMapping("/success")
+	public String success(HttpSession session, Model model) {
+		User userFromSession = (User) session.getAttribute("user");
+		if(userFromSession == null) {
+			return "redirect:/";
+		}
+		model.addAttribute("user", userFromSession);
+		return "success.jsp";
+	}
+	
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		session.removeAttribute("user");
+		return "redirect:/";
+	}
 	
 }
