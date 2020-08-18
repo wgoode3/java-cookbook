@@ -46,7 +46,7 @@ public class UserController {
 		} else {
 			User userFromDb = userServ.create(u);
 			session.setAttribute("user", userFromDb);
-			return "redirect:/success";
+			return "redirect:/home";
 		}		
 	}
 	
@@ -56,21 +56,11 @@ public class UserController {
 		if(userInDb != null) {
 			if(BCrypt.checkpw(password, userInDb.getPassword())) {
 				session.setAttribute("user", userInDb);
-				return "redirect:/success";
+				return "redirect:/home";
 			}
 		}
 		return "redirect:/?loginError=Invalid login attempt";
 	}	
-	
-	@GetMapping("/success")
-	public String success(HttpSession session, Model model) {
-		User userFromSession = (User) session.getAttribute("user");
-		if(userFromSession == null) {
-			return "redirect:/";
-		}
-		model.addAttribute("user", userFromSession);
-		return "success.jsp";
-	}
 	
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {

@@ -1,12 +1,15 @@
 package com.hygogg.cookbook.models;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -38,7 +41,10 @@ public class User {
 	
     @Transient
 	private String confirm;
-	
+    
+    @OneToMany(mappedBy="chef", fetch = FetchType.LAZY)
+    private List<Recipe> myRecipes;
+
 	@Column(updatable=false)
     private Date createdAt;
 	
@@ -91,6 +97,14 @@ public class User {
 
 	public void setConfirm(String confirm) {
 		this.confirm = confirm;
+	}
+	
+	public List<Recipe> getMyRecipes() {
+		return myRecipes;
+	}
+
+	public void setMyRecipes(List<Recipe> myRecipes) {
+		this.myRecipes = myRecipes;
 	}
 
 	public Date getCreatedAt() {
