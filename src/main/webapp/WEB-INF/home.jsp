@@ -10,52 +10,68 @@
     <link rel="stylesheet" href="/webjars/bootstrap/4.5.0/css/bootstrap.min.css" />
     <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
     <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
     <div class="container">
         <a href="/logout" class="btn btn-outline-danger">logout</a>
+        <a href="/new_recipe" class="btn btn-outline-info">New Recipe</a>
         <div class="alert alert-success">
             Welcome back ${user.username}!
         </div>
         
-        <form:form action="/recipe" method="post" modelAttribute="newRecipe">
-            
-            <input type="hidden" name="chef" value="${user.id}" />
+        <h1>Your Favorites</h1>
         
-            <div class="row">
-                <div class="col-md-6">
-		            <div class="form-group">
-		                <label>Recipe Name:</label>
-		                <form:input path="name" class="form-control" />
-		                <form:errors path="name" class="text-danger" />
-		            </div>                
+        <div class="row">
+        <c:forEach items="${user.favorites}" var="recipe">
+            <div class="col-sm-4 mb-3">
+                <div class="card">
+                    <div class="card-header bg-danger text-light">
+                        ${recipe.name}
+                    </div>
+                    <div class="card-body">
+                        <p>Servings: ${recipe.servings}</p>
+                        <p>Ingredients:</p>
+                        <ul>
+                            <c:forEach items="${recipe.getFirstIngredients(3)}" var="ing">
+                                <li>${ing.name}</li>
+                            </c:forEach>
+                            <li>...</li>
+                        </ul>
+                        <p class="snippet">${recipe.getShortInstrunctions(75)}</p>
+                        <a class="btn btn-block btn-danger" href="/recipe/${recipe.id}">View Recipe</a>
+                    </div>
                 </div>
-                <div class="col-md-6">
-		            <div class="form-group">
-		                <label>Number of Servings:</label>
-		                <form:input type="number" path="servings" class="form-control" />
-		                <form:errors path="servings" class="text-danger" />
-		            </div>
+            </div>
+        </c:forEach>        
+        </div>
+        
+        <h1>Other Recipes</h1>
+        
+        <div class="row">
+        <c:forEach items="${allRecipes}" var="recipe">
+            <div class="col-sm-4 mb-3">
+                <div class="card">
+                    <div class="card-header bg-danger text-light">
+                        ${recipe.name}
+                        <a href="/fav/${recipe.id}" class="close text-light">${heart}</a>
+                    </div>
+                    <div class="card-body">
+                        <p>Servings: ${recipe.servings}</p>
+                        <p>Ingredients:</p>
+                        <ul>
+                            <c:forEach items="${recipe.getFirstIngredients(3)}" var="ing">
+                                <li>${ing.name}</li>
+                            </c:forEach>
+                            <li>...</li>
+                        </ul>
+                        <p class="snippet">${recipe.getShortInstrunctions(75)}</p>
+                        <a class="btn btn-block btn-danger" href="/recipe/${recipe.id}">View Recipe</a>
+                    </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label>Ingredients:</label>
-                <form:textarea path="tempIngredients" class="form-control" />
-                <form:errors path="tempIngredients" class="text-danger" />
-                <small class="form-text text-muted">Separate multiple ingredients with commas ",".</small>
-            </div>
-            
-            <div class="form-group">
-                <label>Instructions:</label>
-                <form:textarea path="instructions" class="form-control" />
-                <form:errors path="instructions" class="text-danger" />
-            </div>
-        
-            <input type="submit" value="Add Recipe" class="btn btn-primary btn-block" />
-        
-        </form:form>        
-        
-        ${allRecipes}
+        </c:forEach>        
+        </div>   
         
     </div>
 </body>

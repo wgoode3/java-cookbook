@@ -29,4 +29,13 @@ public class UserService {
 		return userInDb.isPresent() ? userInDb.get() : null;
 	}
 	
+	public User getOne(Long id) {
+		Optional<User> userInDb = userRepo.findById(id);
+		return userInDb.isPresent() ? userInDb.get() : null;
+	}
+	
+	public User update(User u) {
+		return userRepo.save(u);
+	}
+	
 }

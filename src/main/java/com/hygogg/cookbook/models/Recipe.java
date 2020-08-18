@@ -1,5 +1,6 @@
 package com.hygogg.cookbook.models;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -54,7 +55,15 @@ public class Recipe {
         inverseJoinColumns = @JoinColumn(name = "ingredient_id")
     )
     private List<Ingredient> ingredients;
-	
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "favorites", 
+        joinColumns = @JoinColumn(name = "recipe_id"), 
+        inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> fans;
+
 	@Column(updatable=false)
     private Date createdAt;
 	
@@ -123,6 +132,14 @@ public class Recipe {
 	public void setIngredients(List<Ingredient> ingredients) {
 		this.ingredients = ingredients;
 	}
+	
+	public List<User> getFans() {
+		return fans;
+	}
+
+	public void setFans(List<User> fans) {
+		this.fans = fans;
+	}
 
 	public Date getCreatedAt() {
 		return createdAt;
@@ -148,6 +165,21 @@ public class Recipe {
     @PreUpdate
     protected void onUpdate(){
     	this.updatedAt = new Date();
+    }
+    
+    public String getShortInstrunctions(int num) {
+    	return instructions.substring(0, Math.min(instructions.length(), num)) + "...";
+    }
+    
+    public List<Ingredient> getFirstIngredients(int num) {
+    	List<Ingredient> firstFew = new ArrayList<Ingredient>();
+    	if(num > ingredients.size()) {
+    		num = ingredients.size();
+    	}
+    	for(int i=0; i<num; i++) {
+    		firstFew.add(ingredients.get(i));
+    	}
+    	return firstFew;
     }
 
 }

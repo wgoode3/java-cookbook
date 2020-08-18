@@ -47,4 +47,13 @@ public class RecipeService {
 		return (List<Recipe>) recipeRepo.findAll();
 	}
 	
+	public Recipe getOne(Long id) {
+		Optional<Recipe> recipe = recipeRepo.findById(id);
+		return recipe.isPresent() ? recipe.get() : null;
+	}
+	
+	public Recipe update(Recipe toUpdate) {
+		return recipeRepo.save(toUpdate);
+	}
+	
 }

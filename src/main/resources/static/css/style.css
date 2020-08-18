@@ -1,0 +1,12 @@
+.snippet {
+	max-height: 120px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	/* white-space: pre; */
+}
+
+.instructions {
+	white-space: pre;
+	background-color: #eee;
+	padding: 2rem;
+}

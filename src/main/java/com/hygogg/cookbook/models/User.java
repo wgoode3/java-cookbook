@@ -9,6 +9,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -44,6 +47,14 @@ public class User {
     
     @OneToMany(mappedBy="chef", fetch = FetchType.LAZY)
     private List<Recipe> myRecipes;
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "favorites", 
+        joinColumns = @JoinColumn(name = "user_id"), 
+        inverseJoinColumns = @JoinColumn(name = "recipe_id")
+    )
+    private List<Recipe> favorites;
 
 	@Column(updatable=false)
     private Date createdAt;
@@ -105,6 +116,14 @@ public class User {
 
 	public void setMyRecipes(List<Recipe> myRecipes) {
 		this.myRecipes = myRecipes;
+	}
+	
+	public List<Recipe> getFavorites() {
+		return favorites;
+	}
+
+	public void setFavorites(List<Recipe> favorites) {
+		this.favorites = favorites;
 	}
 
 	public Date getCreatedAt() {
