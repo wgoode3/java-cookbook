@@ -167,7 +167,7 @@ public class Recipe {
     	this.updatedAt = new Date();
     }
     
-    public String getShortInstrunctions(int num) {
+    public String getShortInstructions(int num) {
     	return instructions.substring(0, Math.min(instructions.length(), num)) + "...";
     }
     
@@ -180,6 +180,15 @@ public class Recipe {
     		firstFew.add(ingredients.get(i));
     	}
     	return firstFew;
+    }
+    
+    public Boolean checkIfAlreadyLiked(Long userId) {
+    	for(User fan : fans) {
+    		if(fan.getId() == userId) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
 
 }

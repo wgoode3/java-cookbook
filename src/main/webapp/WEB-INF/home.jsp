@@ -38,7 +38,7 @@
                             </c:forEach>
                             <li>...</li>
                         </ul>
-                        <p class="snippet">${recipe.getShortInstrunctions(75)}</p>
+                        <p class="snippet">${recipe.getShortInstructions(75)}</p>
                         <a class="btn btn-block btn-danger" href="/recipe/${recipe.id}">View Recipe</a>
                     </div>
                 </div>
@@ -54,7 +54,12 @@
                 <div class="card">
                     <div class="card-header bg-danger text-light">
                         ${recipe.name}
-                        <a href="/fav/${recipe.id}" class="close text-light">${heart}</a>
+                        <c:if test="${!recipe.checkIfAlreadyLiked(user.id)}">                    
+                            <a href="/fav/${recipe.id}" class="close text-light">${heart}</a>
+                        </c:if>
+                        <c:if test="${recipe.checkIfAlreadyLiked(user.id)}">                    
+                            <a href="/unfav/${recipe.id}" class="close text-light">${hollow}</a>
+                        </c:if>
                     </div>
                     <div class="card-body">
                         <p>Servings: ${recipe.servings}</p>

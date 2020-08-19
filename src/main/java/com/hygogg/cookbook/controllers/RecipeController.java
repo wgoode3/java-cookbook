@@ -38,13 +38,14 @@ public class RecipeController {
 		}
 		List<Recipe> all = recipeServ.getAll();
 		User u = userServ.getOne(userFromSession.getId());
-		for(Recipe r : u.getFavorites()) {
-			all.remove(r);
-		}
+		// for(Recipe r : u.getFavorites()) {
+		// 	  all.remove(r);
+		// }
 		model.addAttribute("user", u);
 		model.addAttribute("allRecipes", all);
 		model.addAttribute("newRecipe", new Recipe());
 		model.addAttribute("heart", "♥");
+		model.addAttribute("hollow", "♡");
 		return "home.jsp";
 	}
 	
@@ -93,12 +94,30 @@ public class RecipeController {
 			return "redirect:/";
 		}
 		Recipe toFav = recipeServ.getOne(id);
-		System.out.println(toFav.getFans());
 		List<User> fans = toFav.getFans();
 		fans.add(userFromSession);
-		System.out.println(fans);
 		toFav.setFans(fans);
 		recipeServ.update(toFav);
+		return "redirect:/home";
+	}
+	
+	@GetMapping("/unfav/{id}")
+	public String unfavRecipe(@PathVariable("id") Long id, HttpSession session, Model model) {
+		User userFromSession = (User) session.getAttribute("user");
+		if(userFromSession == null) {
+			return "redirect:/";
+		}
+		Recipe toUnfav = recipeServ.getOne(id);
+		List<User> fans = toUnfav.getFans();
+		System.out.println(fans);
+		for(int i=0; i<fans.size(); i++) {
+			if(fans.get(i).getId() == userFromSession.getId()) {
+				fans.remove(fans.get(i));
+			}
+		}
+		System.out.println(fans);
+		toUnfav.setFans(fans);
+		recipeServ.update(toUnfav);
 		return "redirect:/home";
 	}
 	
